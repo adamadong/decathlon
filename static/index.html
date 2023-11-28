@@ -23,32 +23,14 @@
     </p4>
     <br>
     <br>
-    <div class="wrap">
-        <button onclick="startRoll()">Allez</button>
-        <div class="container flex">
-            <div class="dice" id="dice1">
-                <img class="dot" id="dotImage1" src="dot1.jpg" alt="Dot Image 1">
-            </div>
-            <div class="dice" id="dice2">
-                <img class="dot" id="dotImage2" src="dot2.jpg" alt="Dot Image 2">
-            </div>
-            <div class="dice" id="dice3">
-                <img class="dot" id="dotImage3" src="dot3.jpg" alt="Dot Image 3">
-            </div>
-            <div class="dice" id="dice4">
-                <img class="dot" id="dotImage4" src="dot4.jpg" alt="Dot Image 4">
-            </div>
-            <div class="dice" id="dice5">
-                <img class="dot" id="dotImage5" src="dot5.jpg" alt="Dot Image 5">
-            </div>
-        </div>
-        
-        <p id="result"></p>
-    </div>
-    <div class="number">
-       
-    </div>
-    <script src="script.js"></script>
+    <button onclick="startGame()">Start Game</button>
 
+    <script>
+        // JavaScript function to navigate to /startgame
+        function startGame() {
+            window.location.href = '/startgame';
+        }
+    </script>
+    
 </body>
 </html>

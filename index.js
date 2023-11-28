@@ -1,6 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
+import { rolling } from './dice_roll.js';
 
 const app = express()
 const __filename = fileURLToPath(import.meta.url);
@@ -15,6 +16,14 @@ app.get('/', (req, res) => {
     res.redirect(301, '/static/index.html')
 })
 
+app.get('/startgame',(req,res) =>{
+    res.sendFile(path.join(__dirname, 'static', 'startgame.html'));
+})
+
+app.get('/roll-dice', (req, res) => {
+    const result = rolling();
+    res.json({ result });
+});
 
 app.use(function (req, res) {
     console.log("et c'est le 404 : " + req.url);

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Game Start!</title> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <h1>test</h1>
+        <div class="wrap">
+            <button onclick="startRoll()">Allez</button>
+            <div class="container flex">
+                <div class="dice" id="dice1">
+                    <img class="dot" id="dotImage1" src="/static/dot1.jpg" alt="Dot Image 1">
+                </div>
+                <div class="dice" id="dice2">
+                    <img class="dot" id="dotImage2" src="/static/dot2.jpg" alt="Dot Image 2">
+                </div>
+                <div class="dice" id="dice3">
+                    <img class="dot" id="dotImage3" src="/static/dot3.jpg" alt="Dot Image 3">
+                </div>
+                <div class="dice" id="dice4">
+                    <img class="dot" id="dotImage4" src="/static/dot4.jpg" alt="Dot Image 4">
+                </div>
+                <div class="dice" id="dice5">
+                    <img class="dot" id="dotImage5" src="/static/dot5.jpg" alt="Dot Image 5">
+                </div>
+            </div>
+            
+            <p id="result"></p>
+        </div>
+        <div class="number" id="numDom">
+           
+        </div>
+        <script>
+            // 在您的 index.html 文件中
+            var diceElements = document.querySelectorAll('.dice');
+            var dotImages = document.querySelectorAll('.dot');
+            var resultElement = document.getElementById('result');
+            let numDom = document.querySelector('.number')
+            var num = 6
+            var numtext =['You are ready to begin','You can try five more times','You can try four more times','You can try three more times', 'You can try two more times', 'You can try only one more time', 'You can not try again']
+            function startRoll() {
+                if (num == 0) {
+                    alert(numtext[6]);
+                    return;
+                }
+                num--;
+    
+                // 更新显示剩余机会的文本
+                numDom.innerHTML = numtext[6 - num];
+    
+                // 发送请求到服务器的新端点 '/roll-dice'
+                fetch('/roll-dice')
+                    .then(response => response.json())
+                    .then(data => {
+                        // 处理从服务器返回的数据，例如更新页面上的结果
+                        const diceResults = data.result.diceResults;
+                        const totalScore = data.result.totalScore;
+    
+                        // 在页面上显示每个骰子的点数
+                        for (let i = 0; i < diceElements.length; i++) {
+                            const diceElement = diceElements[i];
+                            const dotImage = diceElement.querySelector('.dot');
+                            const result = diceResults[i];
+                            dotImage.src = `dot${result}.jpg`;
+                            dotImage.setAttribute('data-id', result);
+                        }
+    
+                        // 显示总分数
+                        resultElement.textContent = `Votre score: ${totalScore}`;
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        </script>
+    </body>
+</html>
