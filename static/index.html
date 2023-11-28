@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>110m haie</title>
+</head>
+<body>
+    <h1 class="title">Decathlon 110m haie</h1>
+    <p1>Les règles sont les suivantes :</p1>
+    <br>
+    <p2>
+        1. Vous commencez par lancer les 5 dés (en cliquant le bouton Allez! ) dont la somme des valeurs sera votre score. 
+    </p2>
+    <br>
+    <p3>
+        2. Si vous n'êtes pas satisfait du résultat, vous avez le droit de les relancez.
+    </p3>
+    <br>
+    <p4>
+        3. <strong class="att">Attention!</strong> Vous n'avez que 5 chances de relancez. Seul le dernier résultat sera enregistré.
+    </p4>
+    <br>
+    <br>
+    <div class="wrap">
+        <button onclick="startRoll()">Allez</button>
+        <div class="container flex">
+            <div class="dice" id="dice1">
+                <img class="dot" id="dotImage1" src="dot1.jpg" alt="Dot Image 1">
+            </div>
+            <div class="dice" id="dice2">
+                <img class="dot" id="dotImage2" src="dot2.jpg" alt="Dot Image 2">
+            </div>
+            <div class="dice" id="dice3">
+                <img class="dot" id="dotImage3" src="dot3.jpg" alt="Dot Image 3">
+            </div>
+            <div class="dice" id="dice4">
+                <img class="dot" id="dotImage4" src="dot4.jpg" alt="Dot Image 4">
+            </div>
+            <div class="dice" id="dice5">
+                <img class="dot" id="dotImage5" src="dot5.jpg" alt="Dot Image 5">
+            </div>
+        </div>
+        
+        <p id="result"></p>
+    </div>
+    <div class="number">
+       
+    </div>
+    <script src="script.js"></script>
+
+</body>
+</html>
