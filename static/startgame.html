@@ -4,7 +4,7 @@
     <title>Game Start!</title> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
     </head>
     <body>
         <h1>test</h1>
@@ -64,7 +64,7 @@
                             const diceElement = diceElements[i];
                             const dotImage = diceElement.querySelector('.dot');
                             const result = diceResults[i];
-                            dotImage.src = `dot${result}.jpg`;
+                            dotImage.src = `./static/dot${result}.jpg`;
                             dotImage.setAttribute('data-id', result);
                         }
     
