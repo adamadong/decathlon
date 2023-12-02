@@ -11,7 +11,7 @@ function startRoll() {
         return
     }
     num--
-    numDom.innerHTML = numtext[6 - num]
+    numDom.innerHTML = numtext[6 - num];
     const dice = document.getElementById('dice1');
     diceElements.forEach(item=>{
         const randomNumber = Math.floor(Math.random() * 4) + 2;
@@ -20,7 +20,7 @@ function startRoll() {
     })
     dotImages.forEach(item => {
         const randomNumber = Math.floor(Math.random() * 6) + 1;
-        item.src = `dot${randomNumber}.jpg`;
+        item.src = '/static/dot${randomNumber}.jpg';
     })
     setTimeout(function () {
         
@@ -30,7 +30,7 @@ function startRoll() {
         })
         dotImages.forEach(item=>{
             const randomNumber = Math.floor(Math.random() * 6) + 1;
-            item.src= `dot${randomNumber}.jpg`;
+            item.src = '/static/dot${randomNumber}.jpg',
             item.setAttribute('data-id', randomNumber)
         })
         // 计算骰子的和

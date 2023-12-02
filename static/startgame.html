@@ -4,12 +4,24 @@
     <title>Game Start!</title> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./static/style.css">
     </head>
     <body>
-        <h1>test</h1>
+        <!-- 欢迎页面 -->
+        <div id="welcomePage">
+            <h1>Bienvenue!</h1>
+            <p>Entrez votre nom:</p>
+            <input type="text" id="userNameInput">
+            <button onclick="startGame()">Commencer le jeu</button>
+        </div>
+
+        <!-- 游戏页面 -->
+        <div id="gamePage" style="display: none;">
+        <h1>Game GO</h1>
+        <p>Bienvenue, <span id="userName"></span>!</p>
         <div class="wrap">
-            <button onclick="startRoll()">Allez</button>
+            <button id="startButton" onclick="startRoll()">Allez</button>
+            
             <div class="container flex">
                 <div class="dice" id="dice1">
                     <img class="dot" id="dotImage1" src="/static/dot1.jpg" alt="Dot Image 1">
@@ -28,51 +40,201 @@
                 </div>
             </div>
             
-            <p id="result"></p>
+                <p id="result"></p>
+                <br>
+                <button id="stopButton" onclick="stopRoll()">Arret</button>
+                <br>
+                <button onclick="newGamer()">New Gamer</button>
+            </div>
         </div>
-        <div class="number" id="numDom">
-           
+        <div class="number" id="numDom"></div>
+
+
+        <!-- 用户名和结果分数的表格 -->
+        <table id="scoreTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="scoreTableBody"></tbody>
+        </table>
         </div>
+
         <script>
             // 在您的 index.html 文件中
+            var welcomePage = document.getElementById('welcomePage');
+            var gamePage = document.getElementById('gamePage');
+            var userNameInput = document.getElementById('userNameInput');
             var diceElements = document.querySelectorAll('.dice');
             var dotImages = document.querySelectorAll('.dot');
             var resultElement = document.getElementById('result');
             let numDom = document.querySelector('.number')
             var num = 6
             var numtext =['You are ready to begin','You can try five more times','You can try four more times','You can try three more times', 'You can try two more times', 'You can try only one more time', 'You can not try again']
+            var rolling = false; // 表示当前是否正在滚动
+            var stopped = false; // 表示是否已经停止
+            var rollCount = 0;// 记录点击 "Allez" 按钮的次数
+            var storedData = [];
+        
+            function loadStoredData() {
+                // 加载存储的数据
+                storedData = getStoredData() || [];
+                if (storedData.length > 0) {
+                    updateScoreTable();
+                    showScoreTable();
+                }
+}
+
+            function startGame() {
+            var userName = userNameInput.value.trim();
+            if (userName === '') {
+                alert('Veuillez entrer votre nom.');
+                return;
+            }
+
+            // 隐藏欢迎页面，显示游戏页面
+            welcomePage.style.display = 'none';
+            gamePage.style.display = 'block';
+
+            // 在游戏页面显示欢迎信息
+            document.getElementById('userName').textContent = userName;
+
+            // 检查是否已经存在该用户信息
+            var userIndex = storedData.findIndex(user => user.name === userName);
+            if (userIndex === -1) {
+                // 如果不存在，添加新用户
+                storedData.push({ name: userName, scores: [] });
+            }
+            }
+
             function startRoll() {
-                if (num == 0) {
+                if (num == 0 || rolling || stopped) {
                     alert(numtext[6]);
                     return;
                 }
+                rolling = true;// 开始滚动时设置标志为true
                 num--;
+                rollCount++;
     
                 // 更新显示剩余机会的文本
                 numDom.innerHTML = numtext[6 - num];
-    
-                // 发送请求到服务器的新端点 '/roll-dice'
-                fetch('/roll-dice')
-                    .then(response => response.json())
-                    .then(data => {
-                        // 处理从服务器返回的数据，例如更新页面上的结果
-                        const diceResults = data.result.diceResults;
-                        const totalScore = data.result.totalScore;
-    
-                        // 在页面上显示每个骰子的点数
-                        for (let i = 0; i < diceElements.length; i++) {
-                            const diceElement = diceElements[i];
-                            const dotImage = diceElement.querySelector('.dot');
-                            const result = diceResults[i];
-                            dotImage.src = `./static/dot${result}.jpg`;
-                            dotImage.setAttribute('data-id', result);
-                        }
-    
-                        // 显示总分数
-                        resultElement.textContent = `Votre score: ${totalScore}`;
-                    })
+
+                const dice = document.getElementById('dice1');
+                diceElements.forEach(item=>{
+                const randomNumber = Math.floor(Math.random() * 4) + 2;
+                item.style.transition = `${randomNumber}s all ease`;
+                item.style.transform = 'rotateX(3600deg)';
+                })
+                dotImages.forEach(item => {
+                const randomNumber = Math.floor(Math.random() * 6) + 1;
+                item.src = `/static/dot${randomNumber}.jpg`;
+                })
+                setTimeout(() => {
+                    if (!rolling || stopped) return;
+
+                    fetch('/roll-dice')
+                        .then(response => response.json())
+                        .then(({ result }) => {
+                    const { diceResults, totalScore } = result;
+
+                    // 显示每个骰子的点数
+                    diceElements.forEach((element, i) => {
+                    const dotImage = element.querySelector('.dot');
+                    const result = diceResults[i];
+                    dotImage.src = `./static/dot${result}.jpg`;
+                    dotImage.setAttribute('data-id', result);
+                    });
+
+                    // 显示总分数
+                    resultElement.textContent = `Votre score: ${totalScore}`;
+                        })
                     .catch(error => console.error('Error:', error));
+
+                    // 重置骰子样式
+                    diceElements.forEach(item => {
+                         item.style.transition = 'none';
+                        item.style.transform = 'rotateX(0deg)';
+                    });
+
+                    // 设置新的点数图像路径
+                    dotImages.forEach(item => {
+                        const randomNumber = Math.floor(Math.random() * 6) + 1;
+                        item.src = `/static/dot${randomNumber}.jpg`;
+                        item.setAttribute('data-id', randomNumber);
+                    });
+                    rolling = false;
+
+                    if (rollCount === 6) {
+                    stopRoll();
+                }
+            }, 2000);
             }
+        function stopRoll() {
+            stopped = true;
+            rolling = false;
+            document.getElementById('startButton').disabled = true;
+
+            // 获取用户名和分数
+            const userName = userNameInput.value.trim();
+            const totalScore = parseInt(resultElement.textContent.split(' ')[2]);
+
+            // 查找用户索引
+            var userIndex = storedData.findIndex(user => user.name === userName);
+            if (userIndex !== -1) {
+                // 添加分数到用户信息
+                storedData[userIndex].scores.push(totalScore);
+
+                // 更新表格
+                updateScoreTable();
+            }
+
+            // 显示用户名和分数的表格
+            showScoreTable();
+
+        }
+
+        function updateScoreTable() {
+            const tableBody = document.getElementById('scoreTableBody');
+            tableBody.innerHTML = ''; // 清空表格内容
+
+            storedData.forEach(user => {
+                const newRow = tableBody.insertRow();
+                const cell1 = newRow.insertCell(0);
+                const cell2 = newRow.insertCell(1);
+                cell1.textContent = user.name;
+                cell2.textContent = user.scores.join(', ');
+            });
+        }
+
+        function showScoreTable() {
+            // 显示用户名和分数的表格
+            document.getElementById('scoreTable').style.display = 'block';
+        }
+
+        function newGamer() {
+            // 重置游戏状态
+            stopped = false;
+            rolling = false;
+            rollCount = 0;
+            document.getElementById('startButton').disabled = false;
+
+            // 重置剩余次数和显示文本
+            num = 6;
+            numDom.innerHTML = numtext[6 - num];
+
+            // 清空骰子结果和总分数显示
+            resultElement.textContent = '';
+
+            // 显示欢迎页面
+            welcomePage.style.display = 'block';
+            gamePage.style.display = 'none';
+
+            // 清空用户名输入框
+            userNameInput.value = '';
+        }
+            
         </script>
     </body>
 </html>
